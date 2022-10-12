@@ -1,44 +1,34 @@
 import React, { useState, useEffect } from "react";
-import '../styles/App.css';
+import "./styles.css";
 
-const Loader = () => {
-  <div id="loader">Loading...</div>;
-};
+const Loader = () => <div id="loader">Loading...</div>;
 
 const App = () => {
-  const [getdata, setData] = useState("");
-  const [getloading, setLoading] = useState(true);
+  const [activity, setActivity] = useState("");
+  const [type, setType] = useState("education");
+  const [loading, setLoading] = useState(false);
 
-  const makeURL = async (type) => {
-    const getdata = await fetch(
+  async function fetching() {
+    setLoading(true);
+    const data = await fetch(
       `https://www.boredapi.com/api/activity?type=${type}`
     );
-    const response = await getdata.json();
+    const res = await data.json();
+    setActivity(res.activity);
     setLoading(false);
-    setData(response.activity);
-  };
-
+  }
   useEffect(() => {
-    makeURL("education");
-  }, []);
+    fetching();
+  }, [type]);
 
-  const handleR = () => {
-    setLoading(true);
-    makeURL("recreational");
-  };
-  const handleE = () => {
-    setLoading(true);
-    makeURL("education");
-  };
   return (
-    <div id="activity">
-      { getloading ? Loader() : getdata }
-      <br />
-      <button id="btn-recreation" onClick={handleR}>
-        Recreational
+    <div id="main">
+      {loading ? <Loader /> : <div id="activity">{activity}</div>}
+      <button id="btn-recreation" onClick={() => setType("recreational")}>
+        recreational
       </button>
-      <button id="btn-education" onClick={handleE}>
-        Education
+      <button id="btn-education" onClick={() => setType("education")}>
+        education
       </button>
     </div>
   );
